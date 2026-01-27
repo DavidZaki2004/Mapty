@@ -1,6 +1,7 @@
 :root {
   --color-brand--1: #ffb545;
   --color-brand--2: #00c46a;
+  --color-brand--3: #fd4646;
 
   --color-dark--1: #2d3439;
   --color-dark--2: #42484d;
@@ -77,6 +78,30 @@ a:visited {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 0.75rem 1.5rem;
 }
+
+.workout__edit,
+.workout__delete {
+  margin-left: 1rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+}
+.workout--running .workout__edit:hover {
+  color: var(--color-brand--2);
+}
+.workout--cycling .workout__edit:hover {
+  color: var(--color-brand--1);
+}
+.workout__delete:hover {
+  color: var(--color-brand--3);
+}
+
+.workout:hover .workout__edit,
+.workout:hover .workout__delete {
+  opacity: 1;
+  visibility: visible;
+}
+
 .workout--running {
   border-left: 5px solid var(--color-brand--2);
 }
@@ -125,7 +150,9 @@ a:visited {
 
   /* Match height and activity boxes */
   height: 9.25rem;
-  transition: all 0.5s, transform 1ms;
+  transition:
+    all 0.5s,
+    transform 1ms;
 }
 
 .form.hidden {
