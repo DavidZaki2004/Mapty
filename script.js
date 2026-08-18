@@ -97,6 +97,8 @@ class App {
   #mapEvent;
   #workouts = [];
   #markers = [];
+  #editingId;
+  #isEditing = false;
 
   constructor() {
     //we now call and effectively run the program the second we initialize
@@ -325,7 +327,17 @@ class App {
         </li>
           `;
     }
-    form.insertAdjacentHTML('afterend', html);
+    if (!this.#isEditing) {
+      // append
+      form.insertAdjacentHTML('afterend', html);
+    }
+    if (this.#isEditing) {
+      // replace
+      const workoutElement = document.querySelector(
+        `.workout[data-id="${workout.id}"]`,
+      );
+      workoutElement.outerHTML = html;
+    }
   }
 
   _moveToPopup(e) {
@@ -349,12 +361,43 @@ class App {
     localStorage.setItem('workouts', JSON.stringify(this.#workouts));
   }
 
+  _editedWorkout(workout) {
+    // preserving important data while changing the relevant data
+    let updatedWorkout;
+
+    if (workout.type === 'running') {
+      updatedWorkout = new Running(
+        workout.coords,
+        workout.distance,
+        workout.duration,
+        workout.cadence,
+      );
+    }
+
+    if (workout.type === 'cycling') {
+      updatedWorkout = new Cycling(
+        workout.coords,
+        workout.distance,
+        workout.duration,
+        workout.elevationGain,
+      );
+    }
+
+    updatedWorkout.id = workout.id;
+    updatedWorkout.date = workout.date;
+
+    return updatedWorkout;
+  }
+
   _getLocalStorage() {
     const data = JSON.parse(localStorage.getItem('workouts'));
 
     if (!data) return;
 
-    this.#workouts = data;
+    // now we can update the local storage with the new data,
+    // (1) workout contains the relevant data in the workout object referring to the workout
+    // (2) we are updating
+    this.#workouts = data.map(workout => this._editedWorkout(workout));
 
     this.#workouts.forEach(work => {
       // console.log(work);
